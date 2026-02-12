@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+venv/
+env/
+.venv
+.git/
+.vscode/
+.idea/
+data/*.json
+logs/
+*.md
+LICENSE

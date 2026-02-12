@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  scraper:
+    build: .
+    container_name: ultimate-webscraper
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./config.yaml:/app/config.yaml:ro    # mount config (read-only)
+      - ./data:/app/data                      # persist scraped data
+      - ./logs:/app/logs                      # persist logs
+    environment:
+      - CHROME_PATH=/usr/bin/chromium

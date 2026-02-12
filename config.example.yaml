@@ -1,0 +1,78 @@
+# Ultimate Web Scraper Configuration
+# Copy to config.yaml and customize.
+
+targets:
+  # Example: Monitor a product page (Cloudflare-protected)
+  - name: "example_product"
+    url: "https://example.com/product/123"
+    interval: 300               # seconds between polls
+    use_stealth: true           # true = Nodriver (bypasses Cloudflare), false = httpx
+    headless: false             # false = visible browser (better CF bypass), true = headless
+    timeout: 30                 # page load timeout
+    wait_for_selector: "//div[@id='price-tag']" # Optional: Wait for this element before scraping (XPath or CSS)
+    # proxy: "http://proxy:8080"  # optional
+    # browser_executable_path: "/usr/bin/chromium"  # optional, auto-detected
+    selectors:
+      # ── Select by ID ─────────────────────────────────────────────
+      - selector: "price-tag"
+        selector_type: "id"     # Options: id, class, css, xpath
+        param: "price"          # key name in the API response
+        default: "N/A"          # returned if element missing
+
+      # ── Select by CSS Class ──────────────────────────────────────
+      - selector: "h1.product-title"
+        selector_type: "css"
+        param: "title"
+
+      # ── Select Attribute (e.g. href, src, data-*) ───────────────
+      - selector: "div.stock-status"
+        selector_type: "css"
+        param: "in_stock"
+        attribute: "data-available"  # extract attribute value instead of text
+
+      # ── Select by XPath (Advanced) ───────────────────────────────
+      - selector: "//div[@class='description']/p[2]"
+        selector_type: "xpath"
+        param: "description"
+        content_mode: "text"    # Options: text (default), inner_html, outer_html
+
+      # ── Extract Raw HTML ─────────────────────────────────────────
+      - selector: "#specifications-table"
+        selector_type: "css"
+        param: "specs_html"
+        content_mode: "outer_html" # Returns the full <table>...</table> string
+
+  # Example: Scrape multiple headlines (simple site, no JS needed)
+  - name: "news_headlines"
+    url: "https://example-news.com"
+    interval: 600
+    use_stealth: false
+    timeout: 15
+    selectors:
+      - selector: "article h2"
+        selector_type: "css"
+        param: "headlines"
+        multiple: true          # returns array of all matches
+
+      - selector: "article a"
+        selector_type: "css"
+        param: "links"
+        multiple: true
+        attribute: "href"
+
+# Server settings
+server_host: "0.0.0.0"
+server_port: 8000
+
+# API authentication — all /api/* endpoints require this key in X-API-Key header
+api_key: "change-me-to-a-strong-secret"
+
+# Logging: DEBUG, INFO, WARNING, ERROR
+log_level: "INFO"
+
+# Where scraped data JSON files are stored
+data_dir: "data"
+
+# Retry on scrape failure
+max_retries: 3
+retry_delay: 5  # base delay in seconds, doubles each retry (exponential backoff)

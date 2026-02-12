@@ -1,0 +1,27 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.installed.cfg
+*.egg
+venv/
+env/
+.venv
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Project-specific — keep examples, ignore user config and runtime data
+config.yaml
+data/*.json
+data/*.tmp
+logs/*.log
+logs/*.zip
+*.tmp
