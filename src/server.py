@@ -8,6 +8,7 @@ from typing import Any, Dict, Optional
 
 from fastapi import Depends, FastAPI, HTTPException, Security, status
 from fastapi.security import APIKeyHeader
+from fastapi.responses import JSONResponse
 from loguru import logger
 
 from src.config import ensure_directories, load_config
@@ -154,7 +155,7 @@ async def get_data(target_name: str):
 @app.exception_handler(Exception)
 async def global_exception_handler(request, exc):
     logger.exception("Unhandled exception on {} {}", request.method, request.url)
-    return HTTPException(
+    return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        detail=f"Internal server error: {exc}",
+        content={"detail": f"Internal server error: {exc}"},
     )
